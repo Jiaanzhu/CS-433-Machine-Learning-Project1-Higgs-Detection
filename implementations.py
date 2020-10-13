@@ -7,6 +7,16 @@ Created on Sun Sep 27 14:14:49 2020
 """
 import numpy as np
 
+def standardize(x):
+    """Standardize the original data set."""
+    x = (x - np.mean(x, axis=0)) / np.std(x, axis=0)
+    return x
+
+def normalize(x):
+    """Standardize the original data set."""
+    x = (x - np.amin(x, axis=0)) / (np.amax(x, axis=0) - np.min(x, axis=0))
+    return x
+
 def compute_loss(y, tx, w):
     """Calculate the loss.
 
@@ -19,7 +29,7 @@ def compute_loss(y, tx, w):
     # For MAE
     # return (1/tx.shape[0])*np.sum(np.abs((y - np.dot(tx, w))))
     # TODO: compute loss by MSE
-    # ***************************************************  
+    # ***************************************************   
     
 def compute_gradient(y, tx, w):
     """Compute the gradient."""
@@ -120,4 +130,43 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         end_index = min((batch_num + 1) * batch_size, data_size)
         if start_index != end_index:
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
+            
+def least_squares(y, tx):
+    """calculate the least squares solution."""
+    # ***************************************************
+    # INSERT YOUR CODE HERE
+    a = np.dot(np.transpose(tx), tx)
+    b = np.dot(np.transpose(tx), y)
+    w = np.linalg.solve(a, b)
+    e = y - np.dot(tx, w)
+    mse = 1/(2*tx.shape[0]) * np.dot(np.transpose(e), e)
+    # returns mse, and optimal weights
+    return mse, w
+    # ***************************************************
+
+def build_poly(x, degree):
+    """polynomial basis functions for input data x, for j=0 up to j=degree."""
+    # ***************************************************
+    # INSERT YOUR CODE HERE
+    x2 = np.transpose(np.matrix(x))
+    x_poly = np.ones((x2.shape[0], 1))
+    for i in range(1, degree+1):
+        x_poly = np.append(x_poly, np.power(x2, i),  axis=1)
+    return x_poly
+    # this function should return the matrix formed
+    # by applying the polynomial basis to the input data
+    # ***************************************************
+
+def ridge_regression(y, tx, lambda_):
+    """implement ridge regression."""
+    # ***************************************************
+    # INSERT YOUR CODE HERE
+    a = np.dot(np.transpose(tx), tx) + 2 * tx.shape[0] * lambda_ * np.identity(tx.shape[1])
+    # 2 * tx.shape[0]
+    b = np.dot(np.transpose(tx), y)
+    w = np.linalg.solve(a, b)
+    e = y - np.dot(tx, w)
+    mse = 1/(2*tx.shape[0]) * np.dot(np.transpose(e), e)
+    return mse, w
+    # ***************************************************
 
