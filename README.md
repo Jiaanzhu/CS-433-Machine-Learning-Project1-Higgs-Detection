@@ -22,4 +22,7 @@ Results:
 20 replace all -999 with mean, use train mean in test, standized, augment, degree = 4, accuracy: 0.6839
 21 replace all -999 with mean, use train mean in test, augment, degree = 5, accuracy: 0.7957
 22 Remove 10 outliers(IQR * 24), replace all -999 with mean, use train mean in test, augment, degree = 5, accuracy: 0.7968(slightly better than previous one)
+23 Remove 10 outliers(IQR * 24), replace all -999 with mean, use train mean in test, standardize, augment, degree = 5, accuracy: 0.7780
+24 4 group method, accuracy: 0.8097
+
 
