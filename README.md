@@ -28,4 +28,5 @@ Results:
 26 4 group method, Remove outliers(IQR * 24) accuracy: 0.8092
 27 4 group method, Remove outliers(IQR * 30) accuracy: 0.8097
 28 3 group method, accuracy: 0.7223
+29 4 group method, augment 2i - 1, degree = 5, accuracy: 0.5384
 
