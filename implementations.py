@@ -2,40 +2,39 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Sep 27 14:14:49 2020
+Here are 6 requried functions
 
-@author: jiaanzhu
+@author: jiaanzhu, leiwang, qinyuezheng
 """
 import numpy as np
+import matplotlib.pyplot as plt
 
-def standardize(x):
-    """Standardize the original data set."""
-    x = (x - np.mean(x, axis=0)) / np.std(x, axis=0)
-    return x
-
-def normalize(x):
-    """Standardize the original data set."""
-    x = (x - np.amin(x, axis=0)) / (np.amax(x, axis=0) - np.min(x, axis=0))
-    return x
-
+'''
+Gradient descent
+'''
 def compute_loss(y, tx, w):
     """Calculate the loss.
 
     You can calculate the loss using mse or mae.
     """
     # ***************************************************
-    # INSERT YOUR CODE HERE
     # For MSE
     return (1/(2 * tx.shape[0]))*np.dot(y - np.dot(tx, w), (y - np.dot(tx, w)))
     # For MAE
     # return (1/tx.shape[0])*np.sum(np.abs((y - np.dot(tx, w))))
-    # TODO: compute loss by MSE
-    # ***************************************************   
-    
+
+def compute_mse(y, tx, w):
+    """Calculate the loss.
+
+    You can calculate the loss using mse or mae.
+    """
+    # For MSE
+    e = y - np.dot(tx, w)
+    return (1/(2 * tx.shape[0]))*np.dot(np.transpose(e), e)
+
 def compute_gradient(y, tx, w):
     """Compute the gradient."""
     # ***************************************************
-    # INSERT YOUR CODE HERE
-    # TODO: compute gradient and error vector
     # For MSE
     return (-1/tx.shape[0]) * np.dot(np.transpose(tx), (y - np.dot(tx, w)))
     # For MAE
@@ -48,63 +47,48 @@ def gradient_descent(y, tx, initial_w, max_iters, gamma):
     ws = [initial_w]
     losses = []
     w = initial_w
-    for n_iter in range(max_iters):
-        # ***************************************************
-        # INSERT YOUR CODE HERE
-        # TODO: compute gradient and loss
+    for n_iter in range(max_iters):      
+        # compute gradient and loss
         loss = compute_loss(y, tx, w)
         gradient = compute_gradient(y, tx, w)
-        # ***************************************************
-        # ***************************************************
-        # INSERT YOUR CODE HERE
-        # TODO: update w by gradient
+        # update w by gradient
         w = w - gamma*gradient
-        # ***************************************************
         # store w and loss
         ws.append(w)
         losses.append(loss)
-        #print("Gradient Descent({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
-        #      bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
+    loss = losses[-1]
+    weight = ws[-1]
+    return loss, weight
 
-    return losses, ws
-
+'''
+Stochastic Gradient Descent
+'''
 def compute_stoch_gradient(y, tx, w):
     """Compute a stochastic gradient from just few examples n and their corresponding y_n labels."""
-    # ***************************************************
-    # INSERT YOUR CODE HERE
-    # TODO: implement stochastic gradient computation.It's same as the gradient descent.
     for minibatch_y, minibatch_tx in batch_iter(y, tx, 1):
         
         return (-1/minibatch_tx.shape[0]) * np.dot(np.transpose(minibatch_tx), (minibatch_y - np.dot(minibatch_tx, w)))
-    # ***************************************************
 
 
 def stochastic_gradient_descent(
-        y, tx, initial_w, batch_size, max_iters, gamma):
+        y, tx, initial_w, max_iters, gamma):
     """Stochastic gradient descent algorithm."""
-    # ***************************************************
-    # INSERT YOUR CODE HERE
-    # TODO: implement stochastic gradient descent.
+    # implement stochastic gradient descent.
     ws = [initial_w]
     losses = []
     w = initial_w
     for n_iter in range(max_iters):
-        # ***************************************************
-        # INSERT YOUR CODE HERE
-        # TODO: compute gradient and loss
+        # compute gradient and loss
         loss = compute_loss(y, tx, w)
         gradient = compute_stoch_gradient(y, tx, w)
-        # ***************************************************
-        # ***************************************************
-        # INSERT YOUR CODE HERE
-        # TODO: update w by gradient
+        # update w by gradient
         w = w - gamma*gradient
-        # ***************************************************
         # store w and loss
         ws.append(w)
-        losses.append(loss)   
-    # ***************************************************
-    return losses, ws
+        losses.append(loss)        
+    loss = losses[-1]
+    weight = ws[-1]
+    return loss, weight
 
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
     """
@@ -130,11 +114,12 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         end_index = min((batch_num + 1) * batch_size, data_size)
         if start_index != end_index:
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
-            
+
+'''
+Least regression
+'''        
 def least_squares(y, tx):
     """calculate the least squares solution."""
-    # ***************************************************
-    # INSERT YOUR CODE HERE
     a = np.dot(np.transpose(tx), tx)
     b = np.dot(np.transpose(tx), y)
     w = np.linalg.solve(a, b)
@@ -142,31 +127,116 @@ def least_squares(y, tx):
     mse = 1/(2*tx.shape[0]) * np.dot(np.transpose(e), e)
     # returns mse, and optimal weights
     return mse, w
-    # ***************************************************
+
 
 def build_poly(x, degree):
     """polynomial basis functions for input data x, for j=0 up to j=degree."""
-    # ***************************************************
-    # INSERT YOUR CODE HERE
+    # this function return the matrix formed by applying the polynomial basis to the input data
     x2 = np.transpose(np.matrix(x))
     x_poly = np.ones((x2.shape[0], 1))
     for i in range(1, degree+1):
         x_poly = np.append(x_poly, np.power(x2, i),  axis=1)
     return x_poly
-    # this function should return the matrix formed
-    # by applying the polynomial basis to the input data
-    # ***************************************************
 
+'''
+Ridge regression
+'''            
+    
 def ridge_regression(y, tx, lambda_):
     """implement ridge regression."""
-    # ***************************************************
-    # INSERT YOUR CODE HERE
     a = np.dot(np.transpose(tx), tx) + 2 * tx.shape[0] * lambda_ * np.identity(tx.shape[1])
-    # 2 * tx.shape[0]
     b = np.dot(np.transpose(tx), y)
     w = np.linalg.solve(a, b)
     e = y - np.dot(tx, w)
     mse = 1/(2*tx.shape[0]) * np.dot(np.transpose(e), e)
     return mse, w
+
+    
+'''
+Logistic regression
+'''
+def sigmoid(t):
+    """apply the sigmoid function on t."""
+    return 1/(1 + np.exp(-t))
+
+def calculate_loss(y, tx, w):
+    """compute the loss: negative log likelihood."""
     # ***************************************************
+    pred = sigmoid(tx.dot(w))
+    loss = y.T.dot(np.log(pred)) + (1 - y).T.dot(np.log(1 - pred))
+    return np.squeeze(- loss)
+    
+def calculate_gradient(y, tx, w):
+    """compute the gradient of loss."""
+    return np.dot(np.transpose(tx), sigmoid(np.dot(tx, w)) - np.transpose(np.matrix(y)))
+
+def logistic_regression(y, tx, initial_w, max_iters, gamma):
+    """Gradient descent algorithm."""
+    # Define parameters to store w and loss
+    ws = [initial_w]
+    losses = []
+    w = initial_w
+    for n_iter in range(max_iters):
+        # compute gradient and loss
+        loss = calculate_loss(y, tx, w)
+        gradient = calculate_gradient(y, tx, w)
+        # update w by gradient
+        w = w - gamma*gradient
+        # store w and loss
+        ws.append(w)
+        losses.append(loss)
+    loss = losses[-1]
+    weight = ws[-1]
+    return loss, weight
+
+
+
+'''
+Regularized Logistic regression
+'''
+def calculate_hessian(y, tx, w):
+    """return the Hessian of the loss function."""
+    S = np.zeros((tx.shape[0], tx.shape[0]))
+    for i in range(tx.shape[0]):
+        value = sigmoid(np.dot(tx[i, :], w)) * (1 - sigmoid(np.dot(tx[i, :], w)))
+        S[i, i] = value[0]
+    return np.dot(np.dot(np.transpose(tx), S), tx)
+
+
+def penalized_logistic_regression(y, tx, w, lambda_):
+    """return the loss, gradient, and Hessian."""
+    loss = calculate_loss(y, tx, w) + lambda_ / (2 * tx.shape[0]) * np.linalg.norm(w) ** 2
+    gradient = calculate_gradient(y, tx, w) + lambda_ * w 
+    hessian = calculate_hessian(y, tx, w) + lambda_ * np.eye(tx.shape[1])
+    # return loss, gradient, and Hessian: TODO
+    return loss, gradient, hessian
+    
+def reg_logistic_regression(y, tx, w, initial_w, gamma, lambda_):
+    """
+    Using the regularized logistic regression.
+    Return the loss and updated w.
+    """
+    losses = []
+    w = initial_w
+    for n_iter in range(max_iters):
+        # compute gradient and loss
+        loss, gradient, hessian = penalized_logistic_regression(y, tx, w, lambda_)
+        # update w by gradient
+        w = w - np.dot(np.linalg.inv(hessian), gradient)
+        # store w and loss
+        ws.append(w)
+        losses.append(loss)
+    loss = losses[-1]
+    weight = ws[-1]
+    return loss, weight
+
+
+
+
+
+
+
+
+
+
 
