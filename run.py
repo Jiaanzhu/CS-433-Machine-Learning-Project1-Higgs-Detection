@@ -17,10 +17,10 @@ from helpers import *
 from proj1_helpers import *
 from implementations import *
 # load train set
-DATA_TRAIN_PATH = 'YOUR PATH' 
+DATA_TRAIN_PATH = 'train.csv' 
 y, tX, ids = load_csv_data(DATA_TRAIN_PATH)
 # load test set
-DATA_TEST_PATH = 'YOUR PATH'
+DATA_TEST_PATH = 'test.csv'
 _, tX_test, ids_test = load_csv_data(DATA_TEST_PATH)
     
 tx = tX.copy() # Make a copy of train data
@@ -99,24 +99,24 @@ def demo():
     tx_test_01_2[:, 15] = tx_test_01_2[:, 15] + 25
     
     # Remove outliers in train set by IQR method
-    tx_01_1, y_0_1 = iqr(tx_01_1, y_0_1, 9)
-    tx_01_2, y_0_2 = iqr(tx_01_2, y_0_2, 9)
-    tx_11_1, y_1_1 = iqr(tx_11_1, y_1_1, 9)
-    tx_11_2, y_1_2 = iqr(tx_11_2, y_1_2, 9)
-    tx_21_1, y_2_1 = iqr(tx_21_1, y_2_1, 9)
+    tx_01_1, y_0_1 = iqr(tx_01_1, y_0_1, 11)
+    tx_01_2, y_0_2 = iqr(tx_01_2, y_0_2, 7)
+    tx_11_1, y_1_1 = iqr(tx_11_1, y_1_1, 11)
+    tx_11_2, y_1_2 = iqr(tx_11_2, y_1_2, 5)
+    tx_21_1, y_2_1 = iqr(tx_21_1, y_2_1, 17)
     tx_21_2, y_2_2 = iqr(tx_21_2, y_2_2, 9)
-    tx_31_1, y_3_1 = iqr(tx_31_1, y_3_1, 9)
-    tx_31_2, y_3_2 = iqr(tx_31_2, y_3_2, 9)
+    tx_31_1, y_3_1 = iqr(tx_31_1, y_3_1, 19)
+    tx_31_2, y_3_2 = iqr(tx_31_2, y_3_2, 15)
     
     # Augment data
     degree1_1 = 7
-    degree1_2 = 10
-    degree2_1 = 5
+    degree1_2 = 8
+    degree2_1 = 4
     degree2_2 = 9
-    degree3_1 = 3
-    degree3_2 = 9
+    degree3_1 = 2
+    degree3_2 = 8
     degree4_1 = 1
-    degree4_2 = 9
+    degree4_2 = 10
     tx_01_1 = build_poly(np.transpose(tx_01_1), degree1_1)
     tx_01_2 = build_poly(np.transpose(tx_01_2), degree1_2)
     tx_11_1 = build_poly(np.transpose(tx_11_1), degree2_1)
@@ -153,8 +153,6 @@ def demo():
     mse_3_1, weights_rg_3_1 = ridge_regression(np.transpose(np.matrix(y_3_1)), tx_31_1, lambda_3_1)
     mse_3_2, weights_rg_3_2 = ridge_regression(np.transpose(np.matrix(y_3_2)), tx_31_2, lambda_3_2)
     
-    # output path
-    OUTPUT_PATH = '/Users/jiaanzhu/Desktop/MLProject1/submission.csv'
     # Predict each subgroup
     y_pred_0_1 = predict_labels(weights_rg_0_1, tx_test_01_1)
     y_pred_0_2 = predict_labels(weights_rg_0_2, tx_test_01_2)
@@ -183,23 +181,14 @@ def demo():
     y_pred[np.where(tx_test[:,22] == 2)] = y_pred_2
     y_pred[np.where(tx_test[:,22] == 3)] = y_pred_3
     # Create submission file
-    create_csv_submission(ids_test, y_pred, OUTPUT_PATH)
+    create_csv_submission(ids_test, y_pred, 'to_submit.csv')
 
 # Run demo
 demo()
     
 
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     
     
