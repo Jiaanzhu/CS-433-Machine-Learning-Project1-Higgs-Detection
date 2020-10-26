@@ -3,7 +3,7 @@
 """
 Created on Sun Sep 27 14:14:49 2020
 Here are 6 requried functions
-
+The reg_logistic_regression may need to run separately
 @author: jiaanzhu, leiwang, qinyuezheng
 """
 import numpy as np
@@ -173,13 +173,14 @@ def calculate_gradient(y, tx, w):
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """Gradient descent algorithm."""
     # Define parameters to store w and loss
-    ws = [initial_w]
-    losses = []
     w = initial_w
+    ws = [w]
+    losses = []
     for n_iter in range(max_iters):
         # compute gradient and loss
         loss = calculate_loss(y, tx, w)
         gradient = calculate_gradient(y, tx, w)
+        print(loss, gradient)
         # update w by gradient
         w = w - gamma*gradient
         # store w and loss
@@ -194,6 +195,26 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
 '''
 Regularized Logistic regression
 '''
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
+    """
+    Using the regularized logistic regression.
+    Return the loss and updated w.
+    """
+    losses = []
+    w = initial_w
+    ws = [w]
+    for n_iter in range(max_iters):
+        # compute gradient and loss
+        loss, gradient, hessian = penalized_logistic_regression(y, tx, w, lambda_)
+        # update w by gradient
+        w = w - np.dot(np.linalg.inv(hessian), gradient)
+        # store w and loss
+        ws.append(w)
+        losses.append(loss)
+    loss = losses[-1]
+    weight = ws[-1]
+    return loss, weight
+
 def calculate_hessian(y, tx, w):
     """return the Hessian of the loss function."""
     S = np.zeros((tx.shape[0], tx.shape[0]))
@@ -211,24 +232,9 @@ def penalized_logistic_regression(y, tx, w, lambda_):
     # return loss, gradient, and Hessian: TODO
     return loss, gradient, hessian
     
-def reg_logistic_regression(y, tx, w, initial_w, gamma, lambda_):
-    """
-    Using the regularized logistic regression.
-    Return the loss and updated w.
-    """
-    losses = []
-    w = initial_w
-    for n_iter in range(max_iters):
-        # compute gradient and loss
-        loss, gradient, hessian = penalized_logistic_regression(y, tx, w, lambda_)
-        # update w by gradient
-        w = w - np.dot(np.linalg.inv(hessian), gradient)
-        # store w and loss
-        ws.append(w)
-        losses.append(loss)
-    loss = losses[-1]
-    weight = ws[-1]
-    return loss, weight
+
+
+
 
 
 
