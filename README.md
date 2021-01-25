@@ -2,10 +2,10 @@
 GROUP: Number_1(Jiaan Zhu, Lei Wang, Qinyue Zheng)
   
 Steps to get our best prediction:
-        1. open the terminal and cd to this folder.
-        2. add "train.csv" and "test.csv" as training dataset and test dataset accordingly to this folder.
-        3. 'python run.py'. !USE YOUR OWN PATH HERE
-        4. a csv file named as ".csv" will appear in this folder.
+1. open the terminal and cd to this folder.
+2. add "train.csv" and "test.csv" as training dataset and test dataset accordingly to this folder.
+3. 'python run.py'. !USE YOUR OWN PATH HERE
+4. a csv file named as ".csv" will appear in this folder.
 
 
 Sidenote:
