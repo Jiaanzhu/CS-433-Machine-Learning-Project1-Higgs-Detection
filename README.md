@@ -1,4 +1,5 @@
-# EPFL- Machine- learning- Project1
+# Higgs-Detection
+
 GROUP: Number_1(Jiaan Zhu, Lei Wang, Qinyue Zheng)
   
 Steps to get our best prediction:
